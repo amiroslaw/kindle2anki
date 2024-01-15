@@ -1,0 +1,4 @@
+Kindle Vocabulary to anki flashcards converter
+
+An open source application designed to facilitate the conversion of Kindle Vocabulary to Anki flashcards, enabling users to effectively study the content they have read on their Kindles. 
+This integration would enable users to effortlessly look up definitions and synonyms as they create their flashcards, fostering deeper understanding and more effective learning experiences.
