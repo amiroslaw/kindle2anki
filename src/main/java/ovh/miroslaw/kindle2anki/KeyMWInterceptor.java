@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 
 @Component
-public class RestInterceptor implements ClientHttpRequestInterceptor {
+public class KeyMWInterceptor implements ClientHttpRequestInterceptor {
     @Value("${api.key}")
     String key;
 

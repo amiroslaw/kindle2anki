@@ -12,14 +12,14 @@ import ovh.miroslaw.kindle2anki.service.MWDictionaryProvider;
 @RequiredArgsConstructor
 public class AppConfig {
 
-    private final RestInterceptor restInterceptor;
+    private final KeyMWInterceptor keyMWInterceptor;
 
     @Bean
     public MWDictionaryProvider mwClient() {
         RestClient client = RestClient
                 .builder()
                 .baseUrl("https://dictionaryapi.com/api/v3/references/learners/json/")
-                .requestInterceptor(restInterceptor)
+                .requestInterceptor(keyMWInterceptor)
                 .build();
 
         HttpServiceProxyFactory factory = HttpServiceProxyFactory
