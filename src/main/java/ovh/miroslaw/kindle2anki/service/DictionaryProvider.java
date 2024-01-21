@@ -1,4 +1,4 @@
-package ovh.miroslaw.kindle2anki;
+package ovh.miroslaw.kindle2anki.service;
 
 public interface DictionaryProvider {
 

@@ -1,36 +1,24 @@
 package ovh.miroslaw.kindle2anki;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.command.annotation.Command;
-import ovh.miroslaw.kindle2anki.model.Root;
+import ovh.miroslaw.kindle2anki.model.Word;
+import ovh.miroslaw.kindle2anki.service.DictionaryProvider;
+import ovh.miroslaw.kindle2anki.service.WordMapper;
 
-import java.util.List;
+import java.util.Optional;
 
 @Command
 @RequiredArgsConstructor
 public class Commands {
 
     private final DictionaryProvider mwClient;
+    private final WordMapper mapper;
 
     @Command(alias = "t")
     public String test() {
-        String json = mwClient.getDefinition("matrix");
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Root>> typeReference = new TypeReference<>() {};
-        try {
-//            List<Root> root = mapper.readValue(json, typeReference);
-            List<Root> root = mapper.readValue(json, typeReference);
-            System.out.println(root);
-            JsonNode defnitions = mapper.readValue(json, JsonNode.class);
-
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return json;
+        String json = mwClient.getDefinition("milk");
+        Optional<Word> word = mapper.map(json);
+        return word.get().toString();
     }
 }
