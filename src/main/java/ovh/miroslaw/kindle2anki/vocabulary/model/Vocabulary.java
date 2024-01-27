@@ -1,4 +1,4 @@
-package ovh.miroslaw.kindle2anki.model;
+package ovh.miroslaw.kindle2anki.vocabulary.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,9 +10,10 @@ import lombok.Getter;
  */
 @Getter
 @Entity
-public class VocabularyArchive {
+@Table(name = "WORDS")
+public class Vocabulary {
     @Id
-    private String word;
+    private String id;
     private String stem;
     private Integer timestamp;
 }

@@ -2,8 +2,9 @@ package ovh.miroslaw.kindle2anki.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ovh.miroslaw.kindle2anki.model.Vocabulary;
-import ovh.miroslaw.kindle2anki.model.VocabularyRepository;
+import org.springframework.transaction.annotation.Transactional;
+import ovh.miroslaw.kindle2anki.vocabulary.model.Vocabulary;
+import ovh.miroslaw.kindle2anki.vocabulary.repository.VocabularyRepository;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +12,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class VocabularyService {
 
-    private final VocabularyRepository wordRepository;
+    private final VocabularyRepository vocabularyRepository;
 
     public Set<String> getVocabulary() {
-        return wordRepository.findAll()
+        return vocabularyRepository.findAll()
                 .stream()
                 .map(Vocabulary::getStem)
                 .collect(Collectors.toSet());
