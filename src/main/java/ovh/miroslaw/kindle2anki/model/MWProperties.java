@@ -11,7 +11,7 @@ public enum MWProperties {
 //    ART_URL("https://www.merriam-webster.com/assets/mw/static/art/dict/"),
 //    ART_URL("http://www.learnersdictionary.com/art/ld/"),
     ART_URL("https://merriam-webster.com/assets/ld/images/legacy_print_images/"),
-    AUDIO_URL("https://media.merriam-webster.com/audio/prons/en/us/mp3/");
+    AUDIO_URL("https://media.merriam-webster.com/audio/prons/en/us/ogg/");
     //    DEFINITION("def"), SEQUENCE("sseq"), SENSE("sense"), DEFINITION_TEXT("dt"), EXAMPLE("vis"), PRS("prs"),
     private final String value;
 }

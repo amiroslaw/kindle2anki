@@ -3,6 +3,7 @@ package ovh.miroslaw.kindle2anki.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
 import ovh.miroslaw.kindle2anki.model.Word;
 
@@ -34,6 +35,7 @@ public class MWWordMapper implements WordMapper {
                 return Optional.of(new Word(
                         nodeToList(definitions),
                         data.findValue(CATEGORY.getValue()).asText(),
+                        Strings.EMPTY,
                         data.findValuesAsText(AUDIO.getValue()),
                         data.findValuesAsText(PRONUNCIATIONS.getValue()),
                         data.findValuesAsText(EXAMPLE_TEXT.getValue()),

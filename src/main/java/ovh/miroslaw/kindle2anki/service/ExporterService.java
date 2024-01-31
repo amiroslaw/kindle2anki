@@ -44,13 +44,13 @@ public class ExporterService {
 
     private String toDictionaryRow(Dictionary dict) {
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s".formatted(dict.getWord(),
-                dict.getDefinitions().getFirst(),
                 dict.getCategory(),
-                dict.getCategory(),
-                dict.getAudios().getFirst(),
-                getExample(dict.getExamples()),
                 dict.getIllustration(),
-                dict.getPronunciations().getFirst()
+                dict.getPronunciations().getFirst(),
+                dict.getAudios().getFirst(),
+                dict.getTranslation(),
+                dict.getDefinitions().getFirst(),
+                getExample(dict.getExamples())
         );
     }
 

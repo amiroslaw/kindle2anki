@@ -29,7 +29,7 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
      * Extension according to the doc https://dictionaryapi.com/products/json#sec-4.artl
      */
     public static final String MW_PICTURE_EXTENSION = ".gif";
-    public static final String MW_AUDIO_EXTENSION = ".mp3";
+    public static final String MW_AUDIO_EXTENSION = ".ogg";
     private final RestClient restClient;
 
     public MWMediaDownloaderService() {
@@ -57,9 +57,9 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
 
     private String getPathVariable(String fileName) {
         return switch (fileName) {
-            case String name when name.startsWith("bix") ->"bix";
-            case String name when name.startsWith("gg") ->"gg";
-            case String name when Character.isDigit(name.charAt(0)) ->"number";
+//            case String name when name.startsWith("bix") ->"bix";
+//            case String name when name.startsWith("gg") ->"gg";
+//            case String name when Character.isDigit(name.charAt(0)) ->"number";
             default -> fileName.substring(0, 1);
                 // TODO if audio begins with a number or punctuation (eg, "_"), the subdirectory should be "number",
         };

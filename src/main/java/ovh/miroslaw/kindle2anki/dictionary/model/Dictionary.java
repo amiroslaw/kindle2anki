@@ -29,6 +29,7 @@ public class Dictionary {
     @Column(name = "definitions", nullable = false)
     private List<String> definitions;
     private String category;
+    private String translation;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "pronunciations", joinColumns = @JoinColumn(name = "dictionary_id"))

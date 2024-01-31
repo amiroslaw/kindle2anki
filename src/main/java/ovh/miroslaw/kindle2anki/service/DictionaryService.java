@@ -21,6 +21,7 @@ public class DictionaryService {
         final Dictionary dictionary = new Dictionary(searchWord,
                 word.definition(),
                 word.category(),
+                word.translation(),
                 word.pronunciation(),
                 word.audio(),
                 word.examples(),
