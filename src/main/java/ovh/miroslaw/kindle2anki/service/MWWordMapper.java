@@ -27,7 +27,7 @@ public class MWWordMapper implements WordMapper {
         try {
             // fetch only the first part of speech
             JsonNode data = mapper.readTree(json).get(0);
-//            System.out.println(data);
+            System.out.println(data);
 
             final JsonNode definitions = data.findPath(SHORTDEF.getValue());
             if (!definitions.isMissingNode()) {

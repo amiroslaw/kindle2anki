@@ -7,11 +7,12 @@ import ovh.miroslaw.kindle2anki.model.Word;
 import ovh.miroslaw.kindle2anki.service.DictionaryProvider;
 import ovh.miroslaw.kindle2anki.service.DictionaryService;
 import ovh.miroslaw.kindle2anki.service.ExporterService;
+import ovh.miroslaw.kindle2anki.service.MediaDownloaderService;
 import ovh.miroslaw.kindle2anki.service.VocabularyService;
 import ovh.miroslaw.kindle2anki.service.WordMapper;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Command
 @RequiredArgsConstructor
@@ -21,18 +22,20 @@ public class Commands {
     private final WordMapper mapper;
     private final VocabularyService vocabularyService;
     private final DictionaryService dictionaryService;
+    private final MediaDownloaderService downloaderService;
     private final ExporterService exporter;
 
     @Command(description = "Get word definition", alias = "d")
     public String definition(@Option(shortNames = 's', required = true) String searchWord) {
         String json = mwClient.getDefinition(searchWord);
         Optional<Word> word = mapper.map(json);
-        word.ifPresent(w -> dictionaryService.save(w, searchWord));
+        word.ifPresent(downloaderService::downloadMedia);
         return searchWord;
     }
 
+    // for what?
     @Command(description = "Convert words from kindle database", alias = "k")
-    public Set<String> database() {
+    public List<String> database() {
         return vocabularyService.getVocabulary();
     }
 
