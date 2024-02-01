@@ -3,7 +3,8 @@ package ovh.miroslaw.kindle2anki;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
-import ovh.miroslaw.kindle2anki.model.Word;
+import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
+import ovh.miroslaw.kindle2anki.model.Tsv;
 import ovh.miroslaw.kindle2anki.service.DictionaryProvider;
 import ovh.miroslaw.kindle2anki.service.DictionaryService;
 import ovh.miroslaw.kindle2anki.service.ExporterService;
@@ -11,7 +12,7 @@ import ovh.miroslaw.kindle2anki.service.MediaDownloaderService;
 import ovh.miroslaw.kindle2anki.service.VocabularyService;
 import ovh.miroslaw.kindle2anki.service.WordMapper;
 
-import java.util.List;
+import java.io.File;
 import java.util.Optional;
 
 @Command
@@ -25,26 +26,37 @@ public class Commands {
     private final MediaDownloaderService downloaderService;
     private final ExporterService exporter;
 
-    @Command(description = "Get word definition", alias = "d")
+    @Command(description = "Get a word definition", alias = "w")
     public String definition(@Option(shortNames = 's', required = true) String searchWord) {
         String json = mwClient.getDefinition(searchWord);
-        Optional<Word> word = mapper.map(json);
-        word.ifPresent(downloaderService::downloadMedia);
+        Optional<Dictionary> word = mapper.map(json, new Tsv(searchWord, ""));
+//        word.ifPresent(downloaderService::downloadMedia);
         return searchWord;
     }
 
-    // for what?
-    @Command(description = "Convert words from kindle database", alias = "k")
-    public List<String> database() {
-        return vocabularyService.getVocabulary();
+    @Command(description = "Convert words from kindle database to anki", alias = "c")
+    public void kindleToAnki() {
+        exportVocabulary();
+        dictionaryService.importTsv();
+        exportDictionary();
     }
 
-    @Command(description = "Convert words from kindle database", alias = "v")
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database", alias = "i")
+    public void importTsv() {
+        dictionaryService.importTsv();
+    }
+
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database", alias = "i")
+    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
+        dictionaryService.importTsv(tsv);
+    }
+
+    @Command(description = "Export kindle vocabulary to a TSV file", alias = "v")
     public void exportVocabulary() {
         exporter.exportVocabulary(vocabularyService.getVocabulary());
     }
 
-    @Command(description = "Export dictionary to TSV for anki", alias = "a")
+    @Command(description = "Export dictionary to a TSV file for anki", alias = "d")
     public void exportDictionary() {
         exporter.exportDictionary(dictionaryService.getDictionary());
     }

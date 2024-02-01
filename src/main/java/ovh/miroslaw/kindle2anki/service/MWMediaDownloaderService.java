@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
 import ovh.miroslaw.kindle2anki.model.MWProperties;
-import ovh.miroslaw.kindle2anki.model.Word;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
+import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_EXTENSION;
+import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_URL;
 
 /**
  * The type Mw media downloader service.
@@ -29,7 +31,6 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
      * Extension according to the doc https://dictionaryapi.com/products/json#sec-4.artl
      */
     public static final String MW_PICTURE_EXTENSION = ".gif";
-    public static final String MW_AUDIO_EXTENSION = ".ogg";
     private final RestClient restClient;
 
     public MWMediaDownloaderService() {
@@ -37,29 +38,31 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
     }
 
     @Override
-    public void downloadMedia(Word word) {
+    public void downloadMedia(Dictionary dictionary) {
         try {
             Files.createDirectories(Paths.get(ankiCollectionPath));
         } catch (IOException e) {
             ANSI_PRINT.accept("Unable to create directory " + ankiCollectionPath, AnsiColor.RED);
         }
-        downloadAudio(word.audio().getFirst());
-        if (!word.illustration().isBlank()) {
-//            downloadIllustration(word.illustration());
+        if (!dictionary.getAudios().isEmpty()) {
+            downloadAudio(dictionary.getAudios().getFirst());
+        }
+        if (!dictionary.getIllustration().isBlank()) {
+//            downloadIllustration(dictionary.illustration());
         }
     }
 
     private void downloadAudio(String fileName) {
         final String pathVariable = getPathVariable(fileName);
-        final String url = String.format("%s%s/", MWProperties.AUDIO_URL.getValue(), pathVariable);
-        download(url, fileName + MW_AUDIO_EXTENSION);
+        final String url = String.format("%s%s/%s/", AUDIO_URL.getValue(), AUDIO_EXTENSION.getValue(), pathVariable);
+        download(url, fileName + "." + AUDIO_EXTENSION.getValue());
     }
 
     private String getPathVariable(String fileName) {
         return switch (fileName) {
-//            case String name when name.startsWith("bix") ->"bix";
-//            case String name when name.startsWith("gg") ->"gg";
-//            case String name when Character.isDigit(name.charAt(0)) ->"number";
+            case String name when name.startsWith("bix") ->"bix";
+            case String name when name.startsWith("gg") ->"gg";
+            case String name when Character.isDigit(name.charAt(0)) ->"number";
             default -> fileName.substring(0, 1);
                 // TODO if audio begins with a number or punctuation (eg, "_"), the subdirectory should be "number",
         };
@@ -82,7 +85,7 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(imageBytes);
         } catch (IOException e) {
-            ANSI_PRINT.accept("Unable to create: " + fileName, AnsiColor.RED);
+            ANSI_PRINT.accept("Unable to create: " + baseUrl + fileName, AnsiColor.RED);
         }
     }
 }

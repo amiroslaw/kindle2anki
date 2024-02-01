@@ -1,8 +1,11 @@
 package ovh.miroslaw.kindle2anki.service;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
 import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
+import ovh.miroslaw.kindle2anki.model.MWProperties;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,6 +14,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
 @Service
 public class ExporterService {
@@ -38,7 +43,7 @@ public class ExporterService {
             Files.writeString(Path.of(configPath + fileName), txt, StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
-            e.printStackTrace();
+            ANSI_PRINT.accept("Unable to write file " + fileName, AnsiColor.RED);
         }
     }
 
@@ -47,11 +52,18 @@ public class ExporterService {
                 dict.getCategory(),
                 dict.getIllustration(),
                 dict.getPronunciations().getFirst(),
-                dict.getAudios().getFirst(),
+                getAudio(dict.getAudios()),
                 dict.getTranslation(),
                 dict.getDefinitions().getFirst(),
                 getExample(dict.getExamples())
         );
+    }
+
+    private String getAudio(List<String> dict) {
+        if (dict.isEmpty()) {
+           return Strings.EMPTY;
+        }
+        return dict.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
     }
 
     private String getExample(List<String> examples) {

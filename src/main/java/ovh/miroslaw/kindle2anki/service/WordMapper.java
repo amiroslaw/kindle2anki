@@ -1,10 +1,11 @@
 package ovh.miroslaw.kindle2anki.service;
 
-import ovh.miroslaw.kindle2anki.model.Word;
+import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
+import ovh.miroslaw.kindle2anki.model.Tsv;
 
 import java.util.Optional;
 
 public interface WordMapper {
 
-    Optional<Word> map(String json);
+    Optional<Dictionary> map(String json, Tsv tsv);
 }
