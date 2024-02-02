@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,14 +19,14 @@ import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 @Service
 public class ExporterService {
 
-    @Value("${config.path}")
-    private String configPath;
-    private static final String VOCAB_TSV = "/vocab.tvs";
-    private static final String DICTIONARY_TSV = "/dictionary.tvs";
+    @Value("${dictionary.tsv.path}")
+    private String dictionaryTsv;
+    @Value("${vocab.tsv.path}")
+    private String vocabTsv;
 
     public void exportVocabulary(List<String> vocab) {
         final String vocabTxt = String.join(System.lineSeparator(), vocab);
-        writeToFile(vocabTxt, VOCAB_TSV);
+        writeToFile(vocabTxt, vocabTsv);
     }
 
     public void exportDictionary(List<Dictionary> dictionaries) {
@@ -35,12 +34,12 @@ public class ExporterService {
                 .distinct()
                 .map(this::toDictionaryRow)
                 .collect(Collectors.joining(System.lineSeparator()));
-        writeToFile(txt, DICTIONARY_TSV);
+        writeToFile(txt, dictionaryTsv);
     }
 
     private void writeToFile(String txt, String fileName) {
         try {
-            Files.writeString(Path.of(configPath + fileName), txt, StandardOpenOption.CREATE,
+            Files.writeString(Path.of(fileName), txt, StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
             ANSI_PRINT.accept("Unable to write file " + fileName, AnsiColor.RED);
@@ -50,25 +49,26 @@ public class ExporterService {
     private String toDictionaryRow(Dictionary dict) {
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s".formatted(dict.getWord(),
                 dict.getCategory(),
-                dict.getIllustration(),
+                getIllustration(dict.getIllustration()),
                 dict.getPronunciations().getFirst(),
                 getAudio(dict.getAudios()),
                 dict.getTranslation(),
                 dict.getDefinitions().getFirst(),
-                getExample(dict.getExamples())
+                dict.getExamples().getFirst()
         );
+    }
+
+    private String getIllustration(String illustration) {
+        if (illustration.isBlank()) {
+            return Strings.EMPTY;
+        }
+        return MWProperties.ART_URL.getValue() + illustration;
     }
 
     private String getAudio(List<String> dict) {
         if (dict.isEmpty()) {
-           return Strings.EMPTY;
+            return Strings.EMPTY;
         }
         return dict.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
-    }
-
-    private String getExample(List<String> examples) {
-        return examples.stream()
-                .min(Comparator.comparingInt(String::length))
-                .orElseThrow();
     }
 }

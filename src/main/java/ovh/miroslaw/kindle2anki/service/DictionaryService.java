@@ -22,9 +22,8 @@ import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 @RequiredArgsConstructor
 public class DictionaryService {
 
-    @Value("${config.path}")
-    private String configPath;
-    private static final String VOCAB_TSV = "/vocab.tvs";
+    @Value("${vocab.tsv.path}")
+    private String vocabTsv;
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryProvider mwClient;
     private final WordMapper wordMapper;
@@ -41,8 +40,9 @@ public class DictionaryService {
     }
 
     public void importTsv() {
-        importTsv(new File(configPath + VOCAB_TSV));
+        importTsv(new File(vocabTsv));
     }
+
     public void importTsv(File tsvFile) {
         List<Tsv> tsvs = new ArrayList<>();
         try {

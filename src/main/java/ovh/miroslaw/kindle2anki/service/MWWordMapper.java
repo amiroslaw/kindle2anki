@@ -3,6 +3,7 @@ package ovh.miroslaw.kindle2anki.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
 import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
@@ -20,6 +21,7 @@ import static ovh.miroslaw.kindle2anki.model.MWProperties.CATEGORY;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.EXAMPLE_TEXT;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.PRONUNCIATIONS;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.SHORTDEF;
+import static ovh.miroslaw.kindle2anki.service.MWMediaDownloaderService.MW_PICTURE_EXTENSION;
 
 @Service
 public class MWWordMapper implements WordMapper {
@@ -42,13 +44,20 @@ public class MWWordMapper implements WordMapper {
                         data.findValuesAsText(PRONUNCIATIONS.getValue()),
                         data.findValuesAsText(AUDIO.getValue()),
                         data.findValuesAsText(EXAMPLE_TEXT.getValue()),
-                        data.findPath(ART.getValue()).asText()
+                        changeExtension(data.findPath(ART.getValue()).asText())
                 ));
             }
         } catch (JsonProcessingException e) {
             ANSI_PRINT.accept("Unable to process json for " + tsv.word(), AnsiColor.RED);
         }
         return Optional.empty();
+    }
+
+    private String changeExtension(String illustration) {
+        if (illustration == null || illustration.isBlank()) {
+            return Strings.EMPTY;
+        }
+        return illustration.substring(0, illustration.lastIndexOf('.')) + MW_PICTURE_EXTENSION;
     }
 
     private List<String> nodeToList(JsonNode values) {
