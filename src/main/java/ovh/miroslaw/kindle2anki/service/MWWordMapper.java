@@ -11,7 +11,9 @@ import ovh.miroslaw.kindle2anki.model.Tsv;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
@@ -43,7 +45,7 @@ public class MWWordMapper implements WordMapper {
                         tsv.translation(),
                         data.findValuesAsText(PRONUNCIATIONS.getValue()),
                         data.findValuesAsText(AUDIO.getValue()),
-                        data.findValuesAsText(EXAMPLE_TEXT.getValue()),
+                        replaceTokens(data.findValuesAsText(EXAMPLE_TEXT.getValue())),
                         changeExtension(data.findPath(ART.getValue()).asText())
                 ));
             }
@@ -51,6 +53,33 @@ public class MWWordMapper implements WordMapper {
             ANSI_PRINT.accept("Unable to process json for " + tsv.word(), AnsiColor.RED);
         }
         return Optional.empty();
+    }
+
+    private List<String> replaceTokens(List<String> examples) {
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("{sc}", Strings.EMPTY);
+        replacements.put("{bc}", Strings.EMPTY);
+        replacements.put("{inf}", "<sub>");
+        replacements.put("{/inf}", "</sub>");
+        replacements.put("{sup}", "<sup>");
+        replacements.put("{/sup}", "</sup>");
+        replacements.put("{b}", "<b>");
+        replacements.put("{/b}", "</b>");
+        replacements.put("{it}", "<i>");
+        replacements.put("{/it}", "</i>");
+        replacements.put("{ldquo}", "&ldquo;");
+        replacements.put("{rdquo}", "&rdquo;");
+
+        return examples.stream()
+                .map(s -> replace(replacements, s))
+                .toList();
+    }
+
+    private String replace(Map<String, String> replacements, String result) {
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            result = result.replace(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     private String changeExtension(String illustration) {
