@@ -50,11 +50,11 @@ public class ExporterService {
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s".formatted(dict.getWord(),
                 dict.getCategory(),
                 getIllustration(dict.getIllustration()),
-                dict.getPronunciations().getFirst(),
+                dict.getPronunciation(),
                 getAudio(dict.getAudios()),
                 dict.getTranslation(),
-                dict.getDefinitions().getFirst(),
-                dict.getExamples().getFirst()
+                dict.getDefinition(),
+                dict.getExample()
         );
     }
 
@@ -65,10 +65,10 @@ public class ExporterService {
         return MWProperties.ART_URL.getValue() + illustration;
     }
 
-    private String getAudio(List<String> dict) {
-        if (dict.isEmpty()) {
+    private String getAudio(List<String> audios) {
+        if (audios.isEmpty()) {
             return Strings.EMPTY;
         }
-        return dict.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
+        return audios.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
     }
 }

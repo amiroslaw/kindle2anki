@@ -37,18 +37,20 @@ public class MWWordMapper implements WordMapper {
 //            System.out.println(data);
 
             final JsonNode definitions = data.findPath(SHORTDEF.getValue());
-            if (!definitions.isMissingNode()) {
-                return Optional.of(new Dictionary(
-                        tsv.word(),
-                        nodeToList(definitions),
-                        data.findValue(CATEGORY.getValue()).asText(),
-                        tsv.translation(),
-                        data.findValuesAsText(PRONUNCIATIONS.getValue()),
-                        data.findValuesAsText(AUDIO.getValue()),
-                        replaceTokens(data.findValuesAsText(EXAMPLE_TEXT.getValue())),
-                        changeExtension(data.findPath(ART.getValue()).asText())
-                ));
+            if (definitions.isMissingNode()) {
+                ANSI_PRINT.accept("Could not find: " + tsv.word(), AnsiColor.RED);
+                return Optional.empty();
             }
+            return Optional.of(new Dictionary(
+                    tsv.word(),
+                    nodeToList(definitions),
+                    data.findValue(CATEGORY.getValue()).asText(),
+                    tsv.translation(),
+                    data.findValuesAsText(PRONUNCIATIONS.getValue()),
+                    data.findValuesAsText(AUDIO.getValue()),
+                    replaceTokens(data.findValuesAsText(EXAMPLE_TEXT.getValue())),
+                    changeExtension(data.findPath(ART.getValue()).asText())
+            ));
         } catch (JsonProcessingException e) {
             ANSI_PRINT.accept("Unable to process json for " + tsv.word(), AnsiColor.RED);
         }

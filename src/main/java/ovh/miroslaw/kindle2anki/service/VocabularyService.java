@@ -7,8 +7,6 @@ import ovh.miroslaw.kindle2anki.vocabulary.model.Vocabulary;
 import ovh.miroslaw.kindle2anki.vocabulary.repository.VocabularyRepository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,21 +17,11 @@ public class VocabularyService {
 
     public List<String> getVocabulary() {
         return vocabularyRepository.findAll()
-                .stream()
+                .parallelStream()
                 .map(Vocabulary::getStem)
                 .distinct()
                 .sorted(String::compareToIgnoreCase)
                 .toList();
     }
 
-    public void get() {
-        final Map<String, Long> collect = this.getVocabulary()
-                .stream()
-                .collect(Collectors.groupingBy(
-                                s -> s,
-                                Collectors.counting()
-                        )
-                );
-        System.out.println(collect);
-    }
 }

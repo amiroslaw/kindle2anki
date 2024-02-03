@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
 import ovh.miroslaw.kindle2anki.dictionary.repository.DictionaryRepository;
 import ovh.miroslaw.kindle2anki.model.Tsv;
@@ -12,9 +11,10 @@ import ovh.miroslaw.kindle2anki.model.Tsv;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
@@ -25,15 +25,9 @@ public class DictionaryService {
     @Value("${vocab.tsv.path}")
     private String vocabTsv;
     private final DictionaryRepository dictionaryRepository;
-    private final DictionaryProvider mwClient;
+    private final DictionaryProvider dictionaryProvider;
     private final WordMapper wordMapper;
     private final MWMediaDownloaderService downloaderService;
-
-    @Transactional
-    public Dictionary save(Dictionary dictionary) {
-        System.out.println("save " + dictionary.getWord());
-        return dictionaryRepository.save(dictionary);
-    }
 
     public List<Dictionary> getDictionary() {
         return dictionaryRepository.findAll();
@@ -44,22 +38,42 @@ public class DictionaryService {
     }
 
     public void importTsv(File tsvFile) {
-        List<Tsv> tsvs = new ArrayList<>();
+        final List<Tsv> existingWords = getWords();
+        List<Tsv> tsvs = readTsv(tsvFile);
+        tsvs.removeAll(existingWords);
+        final List<Dictionary> dictionaries = tsvs.parallelStream()
+                .map(t -> {
+                    final String json = dictionaryProvider.getDefinition(t.word());
+                    return wordMapper.map(json, t);
+                })
+                .flatMap(Optional::stream)
+                .toList();
+
+        save(dictionaries);
+    }
+
+    private void save(List<Dictionary> dictionaries) {
+        dictionaryRepository.saveAll(dictionaries)
+                .parallelStream()
+                .forEach(downloaderService::downloadMedia);
+    }
+
+    private List<Tsv> readTsv(File tsvFile) {
         try {
-//            tsvs = Files.readAllLines(tsvFile.toPath()).parallelStream()
-            tsvs = Files.readAllLines(tsvFile.toPath()).stream()
+            return Files.readAllLines(tsvFile.toPath()).parallelStream()
                     .map(Tsv::lineToObject)
                     .flatMap(Optional::stream)
-                    .toList();
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             ANSI_PRINT.accept("Unable to read file " + tsvFile.getName(), AnsiColor.RED);
+            return Collections.emptyList();
         }
-        for (var tsv : tsvs) {
-            final String json = mwClient.getDefinition(tsv.word());
-            // better save to db in batch
-            wordMapper.map(json, tsv)
-                    .map(this::save)
-                    .ifPresent(downloaderService::downloadMedia);
-        }
+    }
+
+    public List<Tsv> getWords() {
+        return dictionaryRepository.findAll().parallelStream()
+                .map(Tsv::fromDictionary)
+                .distinct()
+                .toList();
     }
 }

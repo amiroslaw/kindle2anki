@@ -13,6 +13,7 @@ import ovh.miroslaw.kindle2anki.service.VocabularyService;
 import ovh.miroslaw.kindle2anki.service.WordMapper;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Command
@@ -36,7 +37,7 @@ public class Commands {
 
     @Command(description = "Convert words from kindle database to anki", alias = "c")
     public void kindleToAnki() {
-        exportVocabulary();
+        exportVocabulary(null);
         dictionaryService.importTsv();
         exportDictionary();
     }
@@ -52,7 +53,8 @@ public class Commands {
     }
 
     @Command(description = "Export kindle vocabulary to a TSV file", alias = "v")
-    public void exportVocabulary() {
+    public void exportVocabulary(@Option(longNames = "From", shortNames = 'f', label = "date", description = "Date from which to export words")
+            LocalDate date) {
         exporter.exportVocabulary(vocabularyService.getVocabulary());
     }
 

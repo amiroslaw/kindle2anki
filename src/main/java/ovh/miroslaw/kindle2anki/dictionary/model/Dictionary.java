@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.List;
 
@@ -48,4 +49,24 @@ public class Dictionary {
 
     private String illustration;
 
+    public String getDefinition() {
+        return getFirstOrEmpty(definitions);
+    }
+
+    public String getExample() {
+        return getFirstOrEmpty(examples);
+    }
+    public String getAudio() {
+        return getFirstOrEmpty(audios);
+    }
+
+    public String getPronunciation() {
+        return getFirstOrEmpty(pronunciations);
+    }
+    private String getFirstOrEmpty(List<String> list) {
+        if (list.isEmpty()) {
+            return Strings.EMPTY;
+        }
+        return list.getFirst();
+    }
 }
