@@ -12,8 +12,9 @@ import lombok.Getter;
 @Entity
 @Table(name = "WORDS")
 public class Vocabulary {
+
     @Id
     private String id;
     private String stem;
-    private Integer timestamp;
+    private Long timestamp;
 }

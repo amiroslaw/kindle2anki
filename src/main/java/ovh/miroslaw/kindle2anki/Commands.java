@@ -13,7 +13,7 @@ import ovh.miroslaw.kindle2anki.service.VocabularyService;
 import ovh.miroslaw.kindle2anki.service.WordMapper;
 
 import java.io.File;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Command
@@ -42,20 +42,26 @@ public class Commands {
         exportDictionary();
     }
 
-    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database", alias = "i")
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database",
+             alias = "i")
     public void importTsv() {
         dictionaryService.importTsv();
     }
 
-    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database", alias = "i")
-    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database",
+             alias = "i")
+    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file",
+                                  description = "TSV file with words") File tsv) {
         dictionaryService.importTsv(tsv);
     }
 
     @Command(description = "Export kindle vocabulary to a TSV file", alias = "v")
-    public void exportVocabulary(@Option(longNames = "From", shortNames = 'f', label = "date", description = "Date from which to export words")
-            LocalDate date) {
-        exporter.exportVocabulary(vocabularyService.getVocabulary());
+    public void exportVocabulary(@Option(longNames = "From", shortNames = 'f', label = "date",
+                                         description = "Date from which to export words. Format: yyyy-MM-dd (2022-01-31)")
+            Optional<String> dateFrom) {
+        final List<String> vocab = dateFrom.map(vocabularyService::getVocabulary)
+                .orElseGet(vocabularyService::getVocabulary);
+        exporter.exportVocabulary(vocab);
     }
 
     @Command(description = "Export dictionary to a TSV file for anki", alias = "d")
