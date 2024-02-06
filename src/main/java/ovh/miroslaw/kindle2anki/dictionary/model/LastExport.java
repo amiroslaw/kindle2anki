@@ -13,14 +13,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Change {
+public class LastExport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Long timestamp;
 
-    public Change(Long timestamp) {
+    public LastExport(Long timestamp) {
         this.timestamp = timestamp;
     }
 }

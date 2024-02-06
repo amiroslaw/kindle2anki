@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ovh.miroslaw.kindle2anki.dictionary.model.Change;
-import ovh.miroslaw.kindle2anki.dictionary.repository.ChangeRepository;
+import ovh.miroslaw.kindle2anki.dictionary.model.LastExport;
+import ovh.miroslaw.kindle2anki.dictionary.repository.LastExportRepository;
 import ovh.miroslaw.kindle2anki.vocabulary.repository.VocabularyRepository;
 
 import java.time.Instant;
@@ -23,7 +23,7 @@ import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 public class VocabularyService {
 
     private final VocabularyRepository vocabularyRepository;
-    private final ChangeRepository changeRepository;
+    private final LastExportRepository lastExportRepository;
 
     public List<String> getVocabulary(String dateFrom) {
         final long timestamp;
@@ -41,7 +41,7 @@ public class VocabularyService {
     }
 
     public List<String> getRecentVocabulary() {
-        return changeRepository.findLastTimestamp()
+        return lastExportRepository.findLastTimestamp()
                 .map(this::getVocabulary)
                 .orElseGet(this::getVocabulary);
     }
@@ -56,8 +56,8 @@ public class VocabularyService {
     }
 
     private void update() {
-        final Change change = new Change(Instant.now().toEpochMilli());
-        changeRepository.save(change);
+        final LastExport lastExport = new LastExport(Instant.now().toEpochMilli());
+        lastExportRepository.save(lastExport);
     }
 
 }
