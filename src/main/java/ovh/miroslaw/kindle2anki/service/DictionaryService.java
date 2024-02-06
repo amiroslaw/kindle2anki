@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI;
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
 @Service
@@ -42,14 +43,26 @@ public class DictionaryService {
         List<Tsv> tsvs = readTsv(tsvFile);
         tsvs.removeAll(existingWords);
         final List<Dictionary> dictionaries = tsvs.parallelStream()
-                .map(t -> {
-                    final String json = dictionaryProvider.getDefinition(t.word());
-                    return wordMapper.map(json, t);
-                })
+                .map(this::convertRowToDictionary)
                 .flatMap(Optional::stream)
                 .toList();
 
         save(dictionaries);
+    }
+
+    public String addDictionary(String searchWord) {
+        return convertRowToDictionary(new Tsv(searchWord))
+                .map(dictionary -> {
+                    downloaderService.downloadMedia(dictionary);
+                    return dictionaryRepository.save(dictionary);
+                })
+                .map(Dictionary::print)
+                .orElseGet(() -> ANSI.apply("Unable to find definition for " + searchWord, AnsiColor.RED));
+    }
+
+    private Optional<Dictionary> convertRowToDictionary(Tsv tsv) {
+        final String json = dictionaryProvider.getDefinition(tsv.word());
+        return wordMapper.map(json, tsv);
     }
 
     private void save(List<Dictionary> dictionaries) {

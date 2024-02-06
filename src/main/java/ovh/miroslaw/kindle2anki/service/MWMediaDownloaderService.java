@@ -47,9 +47,9 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
         if (!dictionary.getAudios().isEmpty()) {
             downloadAudio(dictionary.getAudios().getFirst());
         }
-        if (!dictionary.getIllustration().isBlank()) {
+//        if (!dictionary.getIllustration().isBlank()) {
 //            downloadIllustration(dictionary.illustration());
-        }
+//        }
     }
 
     private void downloadAudio(String fileName) {
@@ -74,7 +74,6 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
     }
 
     private void download(String baseUrl, String fileName) {
-        System.out.println(baseUrl + fileName);
         byte[] imageBytes = restClient.get()
                 .uri(baseUrl + fileName)
                 .retrieve()

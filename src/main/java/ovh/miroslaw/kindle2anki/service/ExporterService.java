@@ -39,7 +39,7 @@ public class ExporterService {
 
     private void writeToFile(String txt, String fileName) {
         try {
-            Files.writeString(Path.of(fileName), txt, StandardOpenOption.CREATE,
+            Files.writeString(Path.of(fileName), txt, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE);
         } catch (IOException e) {
             ANSI_PRINT.accept("Unable to write file " + fileName, AnsiColor.RED);
@@ -50,11 +50,11 @@ public class ExporterService {
         return "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s".formatted(dict.getWord(),
                 dict.getCategory(),
                 getIllustration(dict.getIllustration()),
-                dict.getPronunciation(),
+                dict.getFirstPronunciation(),
                 getAudio(dict.getAudios()),
                 dict.getTranslation(),
-                dict.getDefinition(),
-                dict.getExample()
+                dict.getFirstDefinition(),
+                dict.getFirstExample()
         );
     }
 

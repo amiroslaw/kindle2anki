@@ -7,6 +7,10 @@ import java.util.Optional;
 
 public record Tsv(String word, String translation) {
 
+    public Tsv(String word) {
+        this(word, Strings.EMPTY);
+    }
+
     public static Tsv fromDictionary(Dictionary dictionary) {
         return new Tsv(dictionary.getWord(), dictionary.getTranslation());
     }

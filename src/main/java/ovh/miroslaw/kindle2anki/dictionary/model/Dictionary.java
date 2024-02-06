@@ -11,8 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.boot.ansi.AnsiColor;
 
 import java.util.List;
+
+import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI;
 
 /**
  * Entity class representing personal dictionary.
@@ -22,6 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 public class Dictionary {
+
     @Id
     private String word;
 
@@ -47,22 +51,34 @@ public class Dictionary {
     @Column(name = "examples", nullable = false)
     private List<String> examples;
 
+    public String print() {
+        final String formatted = """
+                %s %s %s 
+                Definitions: %s %s
+                Example: %s
+                """.formatted(word, category, getFirstPronunciation(), getDefinitions(), translation,
+                getFirstExample());
+        return ANSI.apply(formatted, AnsiColor.CYAN);
+    }
+
     private String illustration;
 
-    public String getDefinition() {
+    public String getFirstDefinition() {
         return getFirstOrEmpty(definitions);
     }
 
-    public String getExample() {
+    public String getFirstExample() {
         return getFirstOrEmpty(examples);
     }
-    public String getAudio() {
+
+    public String getFirstAudio() {
         return getFirstOrEmpty(audios);
     }
 
-    public String getPronunciation() {
+    public String getFirstPronunciation() {
         return getFirstOrEmpty(pronunciations);
     }
+
     private String getFirstOrEmpty(List<String> list) {
         if (list.isEmpty()) {
             return Strings.EMPTY;
