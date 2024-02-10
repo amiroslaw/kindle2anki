@@ -42,7 +42,7 @@ public class DictionaryService {
         final List<Tsv> existingWords = getWords();
         List<Tsv> tsvs = readTsv(tsvFile);
         tsvs.removeAll(existingWords);
-        final List<Dictionary> dictionaries = tsvs.parallelStream()
+        final List<Dictionary> dictionaries = tsvs.stream()
                 .map(this::convertRowToDictionary)
                 .flatMap(Optional::stream)
                 .toList();

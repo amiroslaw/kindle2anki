@@ -34,7 +34,7 @@ public class Commands {
         exportDictionary();
     }
 
-    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database",
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database. It will import vocabulary from the 'vocab.tsv' file  from the configuration folder.",
              alias = "i")
     public void importTsv() {
         dictionaryService.importTsv();

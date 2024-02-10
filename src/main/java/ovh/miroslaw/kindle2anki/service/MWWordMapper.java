@@ -43,7 +43,7 @@ public class MWWordMapper implements WordMapper {
             return Optional.of(new Dictionary(
                     tsv.word(),
                     nodeToList(definitions),
-                    data.findValue(CATEGORY.getValue()).asText(),
+                    data.findPath(CATEGORY.getValue()).asText(),
                     tsv.translation(),
                     data.findValuesAsText(PRONUNCIATIONS.getValue()),
                     data.findValuesAsText(AUDIO.getValue()),

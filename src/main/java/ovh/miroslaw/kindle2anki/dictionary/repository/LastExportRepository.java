@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface LastExportRepository extends ListCrudRepository<LastExport, Integer> {
 
-    @Query(value = "SELECT timestamp FROM Change ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT timestamp FROM LastExport ORDER BY id DESC LIMIT 1", nativeQuery = true)
     Optional<Long> findLastTimestamp();
 
 }
