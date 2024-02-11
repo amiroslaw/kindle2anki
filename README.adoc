@@ -15,45 +15,4 @@ This integration would enable users to effortlessly look up definitions and syno
 . Definition
 . Example (enable html)
 
-.Front template
-[source,html]
-----
-{{#Picture}}
-<span style=""><img src="{{Picture}}" /></span>
-{{/Picture}}
-<br>
-<span style="font-family: Comic Sans MS; font-size: 22px; color: #ABDF5B">{{Word}}</span> &nbsp; &nbsp;
-<span style="font-size: 13px; color: #5B69DF">{{Category}}</span>
-<br>
-----
-
-.Back template
-[source,html]
-----
-{{FrontSide}}
-
-<hr id=answer>
-<span style="font-size: 14px; color: #69DF5B">{{Pronunciation}}</span>
-{{#Vocalization}}
-<span style="font-size: 17px; ">[sound:{{Vocalization}}]</span>
-{{/Vocalization}}
-<br>
-<span style="font-family:Calibri; font-size: 20px; color: #5BDFD1; ">{{Translation}}</span>
-<hr>
-<span style="font-family: Calibri; font-size: 16px; color: #FFF9C4">{{Definition}}</span>
-<hr>
-<div style='font-family: Calibri Light; font-size: 16px;'>{{Example}}</div>
-<span style="font-family: Cambria; font-size: 14px; color: #909000"></span><br>
-
-<p align="center">
-<div style=" margin:0 auto; background-color:#333; width:375px; border:1px dotted black; padding:3px;  position: fixed; align: center; bottom: 5px; text-align: center; color: #818; font-size:14px;">
-<a href="https://www.oxfordlearnersdictionaries.com/us/definition/american_english/{{text:Word}}">oxford</a>
-| <a href="https://www.merriam-webster.com/dictionary/{{text:Word}}">WM</a>
-| <a href="https://www.dictionary.com/browse/{{text:Word}}">dictionary</a>
-| <a href="https://www.diki.pl/slownik-angielskiego?q={{text:Word}}">diki</a>
-| <a href="http://pl.bab.la/slownik/angielski-polski/{{text:Word}}">bab.la</a>
-</div>
- 
-</p>
-----
 

@@ -1,0 +1,59 @@
+.card {
+    font-family: arial, sans-serif;
+    font-size: 18px;
+    text-align: center;
+    color: black;
+    background-color: #e8e8e8;
+}
+
+.word {
+    color: #abdf5c;
+    font-size: 23px;
+    font-family: "Comic Sans MS", sans-serif;
+}
+
+.android .word {
+    color: red;
+}
+
+.category {
+    font-size: 13px;
+    color: #5B69DF;
+}
+
+.android .category {
+    color: #77993f;
+}
+
+.pronunciation {
+    font-size: 15px;
+    color: #5BDFD1;
+}
+
+.android .pronunciation {
+    color: #6f44b0;
+}
+
+.translation {
+    font-size: 21px;
+    color: #abdf5c;
+}
+
+.android .translation {
+    color: red;
+}
+
+.definition {
+    font-size: 17px;
+    color: #e3fdf2;
+    font-family: Calibri, serif;
+}
+
+.android .definition {
+    color: #1e122c;
+}
+
+.example {
+    font-size: 16px;
+    font-family: Calibri, serif;
+}
