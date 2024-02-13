@@ -15,6 +15,12 @@ public record Tsv(String word, String translation) {
         return new Tsv(dictionary.getWord(), dictionary.getTranslation());
     }
 
+    /**
+     * Converts a line of text into a Tsv object.
+     *
+     * @param line the input line to be converted
+     * @return an Optional containing the Tsv object, if string not empty
+     */
     public static Optional<Tsv> lineToObject(String line) {
         String[] cols = line.split("\t");
         if (cols.length == 0) {

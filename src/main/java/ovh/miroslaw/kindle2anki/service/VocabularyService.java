@@ -25,6 +25,12 @@ public class VocabularyService {
     private final VocabularyRepository vocabularyRepository;
     private final LastExportRepository lastExportRepository;
 
+    /**
+     * Retrieves the words from Kindle database for a given date.
+     *
+     * @param dateFrom the date in the format yyyy-MM-dd
+     * @return a list of strings representing the vocabulary
+     */
     public List<String> getVocabulary(String dateFrom) {
         final long timestamp;
         try {
@@ -36,15 +42,26 @@ public class VocabularyService {
         return getVocabulary(timestamp);
     }
 
-    public List<String> getVocabulary() {
-        update();
-        return vocabularyRepository.findDistinctOrderedAllWords();
-    }
-
+    /**
+     * Retrieves the words from Kindle database that weren't exported from the last export. Updates the export
+     * timestamp.
+     *
+     * @return a list of strings representing the vocabulary
+     */
     public List<String> getRecentVocabulary() {
         return lastExportRepository.findLastTimestamp()
                 .map(this::getVocabulary)
                 .orElseGet(this::getVocabulary);
+    }
+
+    /**
+     * Retrieves all the words from Kindle database, and update the export timestamp.
+     *
+     * @return a list of strings representing the vocabulary
+     */
+    public List<String> getVocabulary() {
+        update();
+        return vocabularyRepository.findDistinctOrderedAllWords();
     }
 
     private static Instant parseDate(String dateFrom) {

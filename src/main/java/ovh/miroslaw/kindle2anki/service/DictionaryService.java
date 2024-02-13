@@ -22,8 +22,13 @@ public class DictionaryService {
     private final MWMediaDownloaderService downloaderService;
     private final DictionaryRepository dictionaryRepository;
 
+    /**
+     * Retrieve the list of dictionaries form database.
+     *
+     * @return the list of dictionaries
+     */
     public List<Dictionary> getDictionary() {
-        return tsvImporter.getDictionary();
+        return dictionaryRepository.findAll();
     }
 
     public void importTsv() {

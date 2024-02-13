@@ -5,7 +5,7 @@ import ovh.miroslaw.kindle2anki.model.Tsv;
 
 import java.util.Optional;
 
-public interface WordMapper {
+public interface DictionaryMapper {
 
     Optional<Dictionary> map(String json, Tsv tsv);
 }

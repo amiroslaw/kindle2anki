@@ -12,6 +12,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * Interceptor for adding API key to the HTTP request for Merriam-Webster service.
+ */
 @Component
 public class KeyMWInterceptor implements ClientHttpRequestInterceptor {
     @Value("${api.key}")

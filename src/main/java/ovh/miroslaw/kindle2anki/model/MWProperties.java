@@ -3,6 +3,9 @@ package ovh.miroslaw.kindle2anki.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ *  Properties for Merriam-Webster service.
+ */
 @RequiredArgsConstructor
 @Getter
 public enum MWProperties {

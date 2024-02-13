@@ -24,11 +24,21 @@ public class ExporterService {
     @Value("${vocab.tsv.path}")
     private String vocabTsv;
 
+    /**
+     * Export the vocabulary list from kinde to a file.
+     *
+     * @param vocab list of strings representing the vocabulary
+     */
     public void exportVocabulary(List<String> vocab) {
         final String vocabTxt = String.join(System.lineSeparator(), vocab);
         writeToFile(vocabTxt, vocabTsv);
     }
 
+    /**
+     * Export the user dictionary date to a file.
+     *
+     * @param dictionaries list of Dictionary
+     */
     public void exportDictionary(List<Dictionary> dictionaries) {
         final String txt = dictionaries.stream()
                 .distinct()

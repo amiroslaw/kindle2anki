@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.Objects;
 import javax.sql.DataSource;
 
+/**
+ * Configuration for database access for the kindle database - vocab.db.
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(

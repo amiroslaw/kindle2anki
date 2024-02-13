@@ -22,18 +22,16 @@ public class TsvImporter {
 
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryProvider dictionaryProvider;
-    private final WordMapper wordMapper;
+    private final DictionaryMapper dictionaryMapper;
     private final MWMediaDownloaderService downloaderService;
 
-    public List<Dictionary> getDictionary() {
-        return dictionaryRepository.findAll();
-    }
-
+    /**
+     * Imports the data from a TSV file, converts the data to dictionaries, and saves them.
+     *
+     * @param tsvFile the TSV file to import
+     */
     public void importTsv(File tsvFile) {
-        final List<Tsv> existingWords = getWords();
-        List<Tsv> tsvs = readTsv(tsvFile);
-        tsvs.removeAll(existingWords);
-        final List<Dictionary> dictionaries = tsvs.stream()
+        final List<Dictionary> dictionaries = removeDuplicatesFromDB(tsvFile).stream()
                 .map(this::convertRowToDictionary)
                 .flatMap(Optional::stream)
                 .toList();
@@ -41,9 +39,16 @@ public class TsvImporter {
         save(dictionaries);
     }
 
+    private List<Tsv> removeDuplicatesFromDB(File tsvFile) {
+        final List<Tsv> existingWords = getWordsFromDB();
+        List<Tsv> tsvs = readTsv(tsvFile);
+        tsvs.removeAll(existingWords);
+        return tsvs;
+    }
+
     Optional<Dictionary> convertRowToDictionary(Tsv tsv) {
         final String json = dictionaryProvider.getDefinition(tsv.word());
-        return wordMapper.map(json, tsv);
+        return dictionaryMapper.map(json, tsv);
     }
 
     void save(List<Dictionary> dictionaries) {
@@ -64,7 +69,7 @@ public class TsvImporter {
         }
     }
 
-    public List<Tsv> getWords() {
+    public List<Tsv> getWordsFromDB() {
         return dictionaryRepository.findAll().parallelStream()
                 .map(Tsv::fromDictionary)
                 .distinct()

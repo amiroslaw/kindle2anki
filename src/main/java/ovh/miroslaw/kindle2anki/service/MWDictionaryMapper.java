@@ -25,9 +25,19 @@ import static ovh.miroslaw.kindle2anki.model.MWProperties.PRONUNCIATIONS;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.SHORTDEF;
 import static ovh.miroslaw.kindle2anki.service.MWMediaDownloaderService.MW_PICTURE_EXTENSION;
 
+/**
+ * Maps to a Dictionary object.
+ */
 @Service
-public class MWWordMapper implements WordMapper {
+public class MWDictionaryMapper implements DictionaryMapper {
 
+    /**
+     * Maps to a Dictionary object.
+     *
+     * @param json the JSON string from MW api response.
+     * @param tsv the Tsv object that contains the name of the word and the translation
+     * @return an Optional containing a Dictionary object if mapping is successful, empty otherwise
+     */
     @Override
     public Optional<Dictionary> map(String json, Tsv tsv) {
         ObjectMapper mapper = new ObjectMapper();

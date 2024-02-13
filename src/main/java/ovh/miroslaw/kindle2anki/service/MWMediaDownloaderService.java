@@ -18,7 +18,7 @@ import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_EXTENSION;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_URL;
 
 /**
- * The type Mw media downloader service.
+ * Media downloader service for Merriam-Webster service.
  */
 @Service
 public class MWMediaDownloaderService implements MediaDownloaderService {
@@ -35,6 +35,12 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
         this.restClient = RestClient.create();
     }
 
+    /**
+     * Method to download video and illustration for the provided dictionary. Media will be downloaded to default Anki
+     * folder {@link #ankiCollectionPath}.
+     *
+     * @param dictionary the dictionary containing media to be downloaded
+     */
     @Override
     public void downloadMedia(Dictionary dictionary) {
         try {
