@@ -25,14 +25,12 @@ import javax.sql.DataSource;
 )
 public class VocabularyDBConfig {
 
-    
     @Bean
     @ConfigurationProperties("spring.datasource.vocab")
     public DataSourceProperties vocabularyDataSourceProperties() {
         return new DataSourceProperties();
     }
 
-    
     @Bean
     @ConfigurationProperties("spring.datasource.vocab.configuration")
     public DataSource vocabularyDataSource() {
@@ -41,13 +39,11 @@ public class VocabularyDBConfig {
                 .build();
     }
 
-    
     @Bean
     public LocalContainerEntityManagerFactoryBean vocabularyEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("vocabularyDataSource") DataSource dataSource
     ) {
-
         HashMap<String, Object> properties = new HashMap<>();
         properties.put("spring.jpa.database-platform", "org.hibernate.community.dialect.SQLiteDialect");
         return builder.dataSource(dataSource)
@@ -56,7 +52,6 @@ public class VocabularyDBConfig {
                 .build();
     }
 
-    
     @Bean
     public PlatformTransactionManager vocabularyTransactionManager(@Qualifier(
             "vocabularyEntityManagerFactory") LocalContainerEntityManagerFactoryBean vocabularyEntityManagerFactory) {

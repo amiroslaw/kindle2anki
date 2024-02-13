@@ -48,13 +48,12 @@ public class DictionaryDBConfig {
             EntityManagerFactoryBuilder builder,
             @Qualifier("dictionaryDataSource") DataSource dataSource
     ) {
-
-		HashMap<String, Object> properties = new HashMap<>();
-		properties.put("hibernate.hbm2ddl.auto", "update");
+        HashMap<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("spring.jpa.database-platform", "org.hibernate.community.dialect.SQLiteDialect");
 
         return builder.dataSource(dataSource)
-					  .properties(properties)
+                .properties(properties)
                 .packages("ovh.miroslaw.kindle2anki.dictionary.model")
                 .build();
     }

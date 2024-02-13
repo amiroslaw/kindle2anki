@@ -34,27 +34,20 @@ public class Commands {
         exportDictionary();
     }
 
-    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database. It will import vocabulary from the 'vocab.tsv' file  from the configuration folder.",
+    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database. By default it will import vocabulary from the 'vocab.tsv' file  from the configuration folder.",
              alias = "i")
-    public void importTsv() {
-        dictionaryService.importTsv();
+    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
+        if (tsv == null) {
+            dictionaryService.importTsv();
+        } else {
+            dictionaryService.importTsv(tsv);
+        }
     }
 
-    @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database",
-             alias = "i")
-    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file",
-                                  description = "TSV file with words") File tsv) {
-        dictionaryService.importTsv(tsv);
-    }
-
-    @Command(
-            description = "Export kindle vocabulary to a TSV file. By default it will only export vocabulary from the last export.",
-            alias = "v")
+    @Command(description = "Export kindle vocabulary to a TSV file. By default it will only export vocabulary from the last export.", alias = "v")
     public void exportVocabulary(
-            @Option(description = "Date from which to export words. Format: yyyy-MM-dd (2022-01-31)",
-                    longNames = "from", shortNames = 'f') Optional<String> dateFrom,
-            @Option(longNames = "all", shortNames = 'a',
-                    description = "Export all vocabulary. Will omit `from` argument.") boolean all) {
+            @Option(description = "Date from which to export words. Format: yyyy-MM-dd (2022-01-31)", longNames = "from", shortNames = 'f') Optional<String> dateFrom,
+            @Option(longNames = "all", shortNames = 'a', description = "Export all vocabulary. Will omit `from` argument.") boolean all) {
         if (all && dateFrom.isPresent()) {
             ANSI_PRINT.accept("Cannot use `from` and `all` at the same time.", AnsiColor.RED);
             return;

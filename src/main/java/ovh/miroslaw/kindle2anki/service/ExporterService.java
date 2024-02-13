@@ -59,16 +59,12 @@ public class ExporterService {
     }
 
     private String getIllustration(String illustration) {
-        if (illustration.isBlank()) {
-            return Strings.EMPTY;
-        }
+        if (illustration.isBlank()) return Strings.EMPTY;
         return MWProperties.ART_URL.getValue() + illustration;
     }
 
     private String getAudio(List<String> audios) {
-        if (audios.isEmpty()) {
-            return Strings.EMPTY;
-        }
+        if (audios.isEmpty()) return Strings.EMPTY;
         return audios.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
     }
 }

@@ -28,13 +28,14 @@ public class VocabularyService {
     public List<String> getVocabulary(String dateFrom) {
         final long timestamp;
         try {
-            timestamp = LocalDate.parse(dateFrom).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+            timestamp = parseDate(dateFrom).toEpochMilli();
         } catch (DateTimeParseException e) {
             ANSI_PRINT.accept("Wrong date format. Format: yyyy-MM-dd (2022-01-31)", AnsiColor.RED);
             return Collections.emptyList();
         }
         return getVocabulary(timestamp);
     }
+
     public List<String> getVocabulary() {
         update();
         return vocabularyRepository.findDistinctOrderedAllWords();
@@ -44,6 +45,10 @@ public class VocabularyService {
         return lastExportRepository.findLastTimestamp()
                 .map(this::getVocabulary)
                 .orElseGet(this::getVocabulary);
+    }
+
+    private static Instant parseDate(String dateFrom) {
+        return LocalDate.parse(dateFrom).atStartOfDay(ZoneOffset.UTC).toInstant();
     }
 
     private List<String> getVocabulary(long timestamp) {

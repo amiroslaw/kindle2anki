@@ -23,12 +23,10 @@ import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_URL;
 @Service
 public class MWMediaDownloaderService implements MediaDownloaderService {
 
-    @Value("${config.path}")
-    private String configPath;
     @Value("${anki.collection.path}")
     private String ankiCollectionPath;
     /**
-     * Extension according to the doc https://dictionaryapi.com/products/json#sec-4.artl
+     * Extension according to the doc <a href="https://dictionaryapi.com/products/json#sec-4.artl">...</a>
      */
     public static final String MW_PICTURE_EXTENSION = ".gif";
     private final RestClient restClient;
@@ -60,11 +58,11 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
 
     private String getPathVariable(String fileName) {
         return switch (fileName) {
-            case String name when name.startsWith("bix") ->"bix";
-            case String name when name.startsWith("gg") ->"gg";
-            case String name when Character.isDigit(name.charAt(0)) ->"number";
+            case String name when name.startsWith("bix") -> "bix";
+            case String name when name.startsWith("gg") -> "gg";
+            case String name when Character.isDigit(name.charAt(0)) -> "number";
             default -> fileName.substring(0, 1);
-                // TODO if audio begins with a number or punctuation (eg, "_"), the subdirectory should be "number",
+            // TODO if audio begins with a number or punctuation (eg, "_"), the subdirectory should be "number",
         };
     }
 
@@ -74,10 +72,7 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
     }
 
     private void download(String baseUrl, String fileName) {
-        byte[] imageBytes = restClient.get()
-                .uri(baseUrl + fileName)
-                .retrieve()
-                .body(byte[].class);
+        final byte[] imageBytes = retrieveImgBytes(baseUrl, fileName);
 
         final File file = Paths.get(ankiCollectionPath, fileName).toFile();
 
@@ -86,5 +81,12 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
         } catch (IOException e) {
             ANSI_PRINT.accept("Unable to create: " + baseUrl + fileName, AnsiColor.RED);
         }
+    }
+
+    private byte[] retrieveImgBytes(String baseUrl, String fileName) {
+        return restClient.get()
+                .uri(baseUrl + fileName)
+                .retrieve()
+                .body(byte[].class);
     }
 }
