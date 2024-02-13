@@ -39,6 +39,11 @@ public class TsvImporter {
         save(dictionaries);
     }
 
+    Optional<Dictionary> convertRowToDictionary(Tsv tsv) {
+        final String json = dictionaryProvider.getDefinition(tsv.word());
+        return dictionaryMapper.map(json, tsv);
+    }
+
     private List<Tsv> removeDuplicatesFromDB(File tsvFile) {
         final List<Tsv> existingWords = getWordsFromDB();
         List<Tsv> tsvs = readTsv(tsvFile);
@@ -46,18 +51,13 @@ public class TsvImporter {
         return tsvs;
     }
 
-    Optional<Dictionary> convertRowToDictionary(Tsv tsv) {
-        final String json = dictionaryProvider.getDefinition(tsv.word());
-        return dictionaryMapper.map(json, tsv);
-    }
-
-    void save(List<Dictionary> dictionaries) {
+    private void save(List<Dictionary> dictionaries) {
         dictionaryRepository.saveAll(dictionaries)
                 .parallelStream()
                 .forEach(downloaderService::downloadMedia);
     }
 
-    List<Tsv> readTsv(File tsvFile) {
+    private List<Tsv> readTsv(File tsvFile) {
         try {
             return Files.readAllLines(tsvFile.toPath()).parallelStream()
                     .map(Tsv::lineToObject)
@@ -69,7 +69,7 @@ public class TsvImporter {
         }
     }
 
-    public List<Tsv> getWordsFromDB() {
+    private List<Tsv> getWordsFromDB() {
         return dictionaryRepository.findAll().parallelStream()
                 .map(Tsv::fromDictionary)
                 .distinct()
