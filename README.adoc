@@ -1,9 +1,58 @@
-Kindle Vocabulary to anki flashcards converter
+== kindle2anki
+A Kindle Vocabulary to anki flashcards converter.
 
-An open source application designed to facilitate the conversion of Kindle Vocabulary to Anki flashcards, enabling users to effectively study the content they have read on their Kindles. 
-This integration would enable users to effortlessly look up definitions and synonyms as they create their flashcards, fostering deeper understanding and more effective learning experiences.
+An open source application designed to facilitate the conversion of Kindle Vocabulary to Anki flashcards, enabling users to effectively study the content they have read on their Kindles.
+This integration would enable users to effortlessly look up definitions, pronunciation, illustration and sentence examples as they create their flashcards, fostering deeper understanding and more effective learning experiences.
 
-=== Anki template
+.Anki card preview
+image::https://github.com/amiroslaw/repo-assets/raw/master/kindle2anki/anki.webp[anki chart,600,role=center]
+
+This application allows to read the vocabulary database for a Kindle device, fetch data from an online dictionary and export the result to a TSV file which can be imported into Anki program. Definitions and other information about words will be stored in a dictionary database.
+
+The Kindle Vocabulary Builder is a powerful built-in tool for readers aiming to improve their language skills. While reading on your Kindle, long-press any word you're uncertain of to reveal a dictionary definition that appears in a pop-up panel. These words are automatically added to your Vocabulary Builder database.
+
+https://apps.ankiweb.net/[Anki] is a powerful, cross-platform flashcard application designed to help you effectively remember information through spaced repetition.
+
+=== How to use
+This program is flexible; besides, you can convert directly the Kindle database to a TSV dictionary using the `kindle-to-anki` command. It also allows you to split this process into smaller commands. A common scenario is to export vocabulary from Kindle to a TSV file (`export-vocabulary`) in order to edit the wordlist or add a translation to your specific language. The `export-vocabulary` command can take a date as an optional argument for limiting the outcome.
+
+It's possible to add a single word to the user dictionary using the `definition` command. Since the program prints the definition, it can be used as a makeshift dictionary.
+
+.Available Commands
+* export-vocabulary, v: Export kindle vocabulary to a TSV file. By default it will only export vocabulary from the last export.
+* import-tsv, i: Import words from a TSV file, fetch information from dictionary and save to the database. It will import vocabulary from the 'vocab.tsv' file  from the configuration folder.
+* export-dictionary, d: Export dictionary to a TSV file for Anki
+* kindle-to-anki, c: Convert words from kindle database to Anki. Shorcut for export-vocabulary, import-tsv and export-vocabulary
+* definition, w: Get a word definition
+
+.run
+[source,bash]
+----
+java -jar kindle2anki.jar
+----
+
+**Preparation**
+Before a conversion you need to create configuration directory in `${XDG_CONFIG_HOME}/kindle2anki` and add the api key in `config.properties`.
+Copy the Kindle database to that directory. The database can be found in: `[Kindle directory]/system/vocabulary/vocab.db`.
+Install Anki, and check if you have `${XDG_DATA_HOME}/Anki2/User\ 1/collection.media` folder. It stores audio and picture files.
+
+==== Translation
+Optionally, translation can be added to the `dictionary.tsv` file. I recommend importing this file to your Google Drive's Spreadsheet. In the second column, use the `GOOGLETRANSLATE` formula. Here's an example of translating English words into Polish:
+
+	=GOOGLETRANSLATE(A1; "en";"pl")
+
+Save this spreadsheet as a `TSV` file and replace the existing `dictionary.tsv` file.
+
+==== Importing to Anki
+Anki's desktop application requires a template and custom fields for more advance cards. Documentation can be found in https://docs.ankiweb.net/templates/intro.html[Card Templates].  To prepare your deck, follow these steps:
+
+. go to menu:Tools[Manage Note Types]
+. click the `Add` button and create a new notetype
+. add fields - https://docs.ankiweb.net/editing.html?highlight=templa#customizing-fields[Anki Manual]
+. go to the `Cards` window and copy templates and style from `templates` location in this repository.
+. import `dictionary.tsv` by clicking menu:File[Import]
+
+In our case, templates require following fields. Enable html formatting if necessary.
 
 .Fields
 . Word
@@ -15,4 +64,36 @@ This integration would enable users to effortlessly look up definitions and syno
 . Definition
 . Example (enable html)
 
+.Fields for Anki template
+image::https://github.com/amiroslaw/repo-assets/raw/master/kindle2anki/fields.webp[fields chart,500,role=center]
 
+Conversion will produce `dictionary.tsv` file which can be import to Anki.
+
+.Importing a tsv dictionary file to anki
+image::https://github.com/amiroslaw/repo-assets/raw/master/kindle2anki/import.webp[import chart,600,role=center]
+
+==== AnkiDroid
+https://play.google.com/store/apps/details?id=com.ichi2.anki&hl=en_US&gl=US[AnkiDroid] is a free Android application which can use flashcards generated in Anki. There are two options to import cards. 
+The first is to synchronize the desktop app with  https://ankiweb.net/[ankiweb.net] in order to download flashcards and your progression from your account. 
+It's also possible to export an "Anki Deck Package" (.apkg) file and import it to the AnkiDroid. In order to do that, click on menu:File[Export], and choose the `apkg` format, your deck. Select `Include media` for adding audios and pictures.
+
+=== Configuration
+User configuration is stored in ${XDG_CONFIG_HOME}/kindle2anki/config.properties`.
+It's necessary to provide `api.key` from https://dictionaryapi.com/register/index[Merriam-Webster Dictionary].
+For confidence, change `vocab.db.path` of the Kindle database in mounted device or override others properties.
+
+[source,properties]
+----
+api.key=your-key
+# optional properties
+vocab.db.path=${config.path}/vocab.db
+vocab.tsv.path=${config.path}/vocab.tsv
+dictionary.tsv.path=${config.path}/dictionary.tsv
+anki.collection.path=${XDG_DATA_HOME}/Anki2/User\ 1/collection.media
+spring.shell.config.location=${config.path}
+server.port=8081
+----
+
+=== Used technology
+Spring Shell
+This is cross-platform software, you must have installed https://java.com/pl/download/[java 21] or above to run it.

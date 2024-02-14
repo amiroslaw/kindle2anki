@@ -27,7 +27,7 @@ public class Commands {
         return dictionaryService.addDictionary(searchWord);
     }
 
-    @Command(description = "Convert words from kindle database to anki", alias = "c")
+    @Command(description = "Convert words from kindle database to Anki", alias = "c")
     public void kindleToAnki() {
         exportVocabulary(Optional.empty(), false);
         dictionaryService.importTsv();
@@ -62,7 +62,7 @@ public class Commands {
         }
     }
 
-    @Command(description = "Export dictionary to a TSV file for anki", alias = "d")
+    @Command(description = "Export dictionary to a TSV file for Anki", alias = "d")
     public void exportDictionary() {
         exporter.exportDictionary(dictionaryService.getDictionary());
     }
