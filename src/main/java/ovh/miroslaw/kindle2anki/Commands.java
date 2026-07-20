@@ -36,7 +36,7 @@ public class Commands {
 
     @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database. By default it will import vocabulary from the 'vocab.tsv' file  from the configuration folder.",
              alias = "i")
-    public void importTsv(@Option(longNames = "tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
+    public void importTsv(@Option(longNames = "import-tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
         if (tsv == null) {
             dictionaryService.importTsv();
         } else {

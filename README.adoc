@@ -1,3 +1,5 @@
+:experimental:
+
 == kindle2anki
 A Kindle Vocabulary to anki flashcards converter.
 
@@ -19,10 +21,10 @@ This program is flexible; besides, you can convert directly the Kindle database 
 It's possible to add a single word to the user dictionary using the `definition` command. Since the program prints the definition, it can be used as a makeshift dictionary.
 
 .Available Commands
+* kindle-to-anki, c: Convert words from kindle database to Anki. Shortcut for export-vocabulary, import-tsv and export-dictionary
 * export-vocabulary, v: Export kindle vocabulary to a TSV file. By default it will only export vocabulary from the last export.
-* import-tsv, i: Import words from a TSV file, fetch information from dictionary and save to the database. It will import vocabulary from the 'vocab.tsv' file  from the configuration folder.
-* export-dictionary, d: Export dictionary to a TSV file for Anki
-* kindle-to-anki, c: Convert words from kindle database to Anki. Shorcut for export-vocabulary, import-tsv and export-vocabulary
+* import-tsv, i [file]: Import words from a TSV file, fetch information from dictionary and save to the database. It will import vocabulary from the 'vocab.tsv' file  from the configuration folder.
+* export-dictionary, d: Export dictionary to an Anki TSV file
 * definition, w: Get a word definition
 
 .run
@@ -44,22 +46,24 @@ Optionally, translation can be added to the `dictionary.tsv` file. I recommend i
 Save this spreadsheet as a `TSV` file and replace the existing `dictionary.tsv` file.
 
 ==== Importing to Anki
+The application can  produce `dictionary.tsv` file which can be import to Anki.
+
 Anki's desktop application requires a template and custom fields for more advance cards. Documentation can be found in https://docs.ankiweb.net/templates/intro.html[Card Templates].  To prepare your deck, follow these steps:
 
 . go to menu:Tools[Manage Note Types]
 . click the `Add` button and create a new notetype
-. add fields - https://docs.ankiweb.net/editing.html?highlight=templa#customizing-fields[Anki Manual]
+. click the `Fields` - https://docs.ankiweb.net/editing.html?highlight=templa#customizing-fields[Anki Manual]
 . go to the `Cards` window and copy templates and style from `templates` location in this repository.
 . import `dictionary.tsv` by clicking menu:File[Import]
 
-In our case, templates require following fields. Enable html formatting if necessary.
+In our case, templates require following fields. Enable html formatting if necessary (`Use HMTL editor by default`). Order matters, otherwise fields won't match the sports in the templates.
 
 .Fields
 . Word
 . Category
 . Picture (enable html)
 . Pronunciation (enable html)
-. Vocabulary
+. Vocalization
 . Translation
 . Definition
 . Example (enable html)
@@ -67,10 +71,13 @@ In our case, templates require following fields. Enable html formatting if neces
 .Fields for Anki template
 image::https://github.com/amiroslaw/repo-assets/raw/master/kindle2anki/fields.webp[fields chart,500,role=center]
 
-Conversion will produce `dictionary.tsv` file which can be import to Anki.
+First crate a blank deck.
+Conversion will produce dictionary.tsv file which can be import to Anki. menu:File[Import]
 
 .Importing a tsv dictionary file to anki
 image::https://github.com/amiroslaw/repo-assets/raw/master/kindle2anki/import.webp[import chart,600,role=center]
+
+The audio and the picture files are stored to `${XDG_DATA_HOME}/Anki2/User\ 1/collection.media`. Anki desktop application will try to find them during the export to `apkg` format.
 
 ==== AnkiDroid
 https://play.google.com/store/apps/details?id=com.ichi2.anki&hl=en_US&gl=US[AnkiDroid] is a free Android application which can use flashcards generated in Anki. There are two options to import cards. 
@@ -81,6 +88,12 @@ It's also possible to export an "Anki Deck Package" (.apkg) file and import it t
 User configuration is stored in ${XDG_CONFIG_HOME}/kindle2anki/config.properties`.
 It's necessary to provide `api.key` from https://dictionaryapi.com/register/index[Merriam-Webster Dictionary].
 For confidence, change `vocab.db.path` of the Kindle database in mounted device or override others properties.
+
+.files
+* vocab.tsv list of words that will be used for fetching data from Merriam-Webster dictionary. You can provide pairs english/translator
+* vocab.db Kindle database with metadata and highlights.
+* dictionary.db this database has all translated words and information fetched from Merriam-Webster dictionary. You can create many vocab.tsv files but all translations are stored to one database.
+* dictionary.tsv export data, this file can be imported to Anki
 
 [source,properties]
 ----

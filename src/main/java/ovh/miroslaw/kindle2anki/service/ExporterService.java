@@ -75,6 +75,6 @@ public class ExporterService {
 
     private String getAudio(List<String> audios) {
         if (audios.isEmpty()) return Strings.EMPTY;
-        return audios.getFirst() + "." + MWProperties.AUDIO_EXTENSION.getValue();
+        return "[sound:%s.%s]".formatted(audios.getFirst(), MWProperties.AUDIO_EXTENSION.getValue());
     }
 }

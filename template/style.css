@@ -1,59 +1,73 @@
 .card {
-    font-family: arial, sans-serif;
-    font-size: 18px;
-    text-align: center;
-    color: black;
-    background-color: #e8e8e8;
+  font-family: arial, sans-serif;
+  font-size: 18px;
+  text-align: center;
+  color: black;
+  background-color: #e8e8e8;
 }
 
 .word {
-    color: #abdf5c;
-    font-size: 23px;
-    font-family: "Comic Sans MS", sans-serif;
+  color: #abdf5c;
+  font-size: 23px;
+  font-family: "Comic Sans MS", sans-serif;
 }
 
 .android .word {
-    color: red;
+  color: red;
 }
 
 .category {
-    font-size: 13px;
-    color: #5B69DF;
+  font-size: 13px;
+  color: #5b69df;
 }
 
 .android .category {
-    color: #77993f;
+  color: #77993f;
 }
 
 .pronunciation {
-    font-size: 15px;
-    color: #5BDFD1;
+  font-size: 15px;
+  color: #5bdfd1;
 }
 
 .android .pronunciation {
-    color: #6f44b0;
+  color: #6f44b0;
 }
 
 .translation {
-    font-size: 21px;
-    color: #abdf5c;
+  font-size: 21px;
+  color: #abdf5c;
 }
 
 .android .translation {
-    color: red;
+  color: red;
 }
 
 .definition {
-    font-size: 17px;
-    color: #e3fdf2;
-    font-family: Calibri, serif;
+  font-size: 17px;
+  color: #662da8;
+  font-family: Calibri, serif;
 }
 
 .android .definition {
-    color: #1e122c;
+  color: #662da8;
 }
 
 .example {
-    font-size: 16px;
-    font-family: Calibri, serif;
+  font-size: 16px;
+  font-family: Calibri, serif;
 }
+
+/* it doesn't work, I use inline */
+/* .links { */
+/*   margin: 0 auto; */
+/*   width: 375px; */
+/*   border: 1px dotted black; */
+/*   padding: 3px; */
+/*   position: fixed; */
+/*   align: center; */
+/*   bottom: 5px; */
+/*   text-align: center; */
+/*   color: #818; */
+/*   font-size: 14px; */
+/* } */
