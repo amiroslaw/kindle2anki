@@ -1,13 +1,14 @@
 package ovh.miroslaw.kindle2anki.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.stereotype.Service;
 import ovh.miroslaw.kindle2anki.dictionary.model.Dictionary;
 import ovh.miroslaw.kindle2anki.model.Tsv;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,27 +41,26 @@ public class MWDictionaryMapper implements DictionaryMapper {
      */
     @Override
     public Optional<Dictionary> map(String json, Tsv tsv) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         try {
             // fetch only the first part of speech
-            JsonNode data = mapper.readTree(json).get(0);
-
-            final JsonNode definitions = data.findPath(SHORTDEF.getValue());
-            if (definitions.isMissingNode()) {
-                ANSI_PRINT.accept("Could not find: " + tsv.word(), AnsiColor.RED);
-                return Optional.empty();
-            }
-            return Optional.of(new Dictionary(
-                    tsv.word(),
-                    nodeToList(definitions),
-                    data.findPath(CATEGORY.getValue()).asText(),
-                    tsv.translation(),
-                    data.findValuesAsText(PRONUNCIATIONS.getValue()),
-                    data.findValuesAsText(AUDIO.getValue()),
-                    replaceTokens(data.findValuesAsText(EXAMPLE_TEXT.getValue())),
-                    changeExtension(data.findPath(ART.getValue()).asText())
-            ));
-        } catch (JsonProcessingException e) {
+            return Optional.ofNullable(mapper.readTree(json).get(0))
+                    .filter(data -> !data.findPath(SHORTDEF.getValue()).isMissingNode())
+                    .map(data -> new Dictionary(
+                            tsv.word(),
+                            nodeToList(data.findPath(SHORTDEF.getValue())),
+                            data.findPath(CATEGORY.getValue()).asString(),
+                            tsv.translation(),
+                            data.findValuesAsString(PRONUNCIATIONS.getValue()),
+                            data.findValuesAsString(AUDIO.getValue()),
+                            replaceTokens(data.findValuesAsString(EXAMPLE_TEXT.getValue())),
+                            changeExtension(data.findPath(ART.getValue()).asString())
+                    ))
+                    .or(() -> {
+                        ANSI_PRINT.accept("Could not find: " + tsv.word(), AnsiColor.RED);
+                        return Optional.empty();
+                    });
+        } catch (JacksonException _) {
             ANSI_PRINT.accept("Unable to process json for " + tsv.word(), AnsiColor.RED);
         }
         return Optional.empty();
@@ -109,7 +109,7 @@ public class MWDictionaryMapper implements DictionaryMapper {
         }
         List<String> texts = new ArrayList<>();
         for (JsonNode value : values) {
-            texts.add(value.asText());
+            texts.add(value.asString());
         }
         return texts;
     }

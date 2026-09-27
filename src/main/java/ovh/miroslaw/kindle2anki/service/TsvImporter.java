@@ -15,11 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Gatherers;
 
 @Service
 @RequiredArgsConstructor
 public class TsvImporter {
 
+    private static final int MAX_CONCURRENT_DOWNLOADS = 8;
     private final DictionaryRepository dictionaryRepository;
     private final DictionaryProvider dictionaryProvider;
     private final DictionaryMapper dictionaryMapper;
@@ -32,16 +34,23 @@ public class TsvImporter {
      */
     public void importTsv(File tsvFile) {
         final List<Dictionary> dictionaries = removeDuplicatesFromDB(tsvFile).stream()
-                .map(this::convertRowToDictionary)
-                .flatMap(Optional::stream)
-                .toList();
+                .gather(Gatherers.mapConcurrent(MAX_CONCURRENT_DOWNLOADS, this::convertRowToDictionary))
+                .flatMap(Optional::stream).collect(Collectors.toList());
 
         save(dictionaries);
     }
 
     Optional<Dictionary> convertRowToDictionary(Tsv tsv) {
-        final String json = dictionaryProvider.getDefinition(tsv.word());
-        return dictionaryMapper.map(json, tsv);
+        return dictionaryProvider.getDefinition(tsv.word())
+                .flatMap(json -> dictionaryMapper.map(json, tsv))
+                .or(() -> {
+                    TerminalUtil.ANSI_PRINT.accept("No definition found for word: " + tsv.word(), AnsiColor.YELLOW);
+                    return Optional.empty();
+                });
+    }
+
+    Optional<Dictionary> addDictionary(String searchWord) {
+        return this.convertRowToDictionary(new Tsv(searchWord, ""));
     }
 
     private List<Tsv> removeDuplicatesFromDB(File tsvFile) {
@@ -52,27 +61,23 @@ public class TsvImporter {
     }
 
     private void save(List<Dictionary> dictionaries) {
-        dictionaryRepository.saveAll(dictionaries)
-                .parallelStream()
-                .forEach(downloaderService::downloadMedia);
+        dictionaryRepository.saveAll(dictionaries).stream()
+                .gather(Gatherers.mapConcurrent(MAX_CONCURRENT_DOWNLOADS, dictionary -> {
+                    downloaderService.downloadMedia(dictionary);
+                    return dictionary;
+                })).toList();
     }
 
     private List<Tsv> readTsv(File tsvFile) {
         try {
-            return Files.readAllLines(tsvFile.toPath()).parallelStream()
-                    .map(Tsv::lineToObject)
-                    .flatMap(Optional::stream)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
+            return Files.readAllLines(tsvFile.toPath()).parallelStream().map(Tsv::lineToObject).flatMap(Optional::stream).collect(Collectors.toList());
+        } catch (IOException _) {
             TerminalUtil.ANSI_PRINT.accept("Unable to read file " + tsvFile.getName(), AnsiColor.RED);
             return Collections.emptyList();
         }
     }
 
     private List<Tsv> getWordsFromDB() {
-        return dictionaryRepository.findAll().parallelStream()
-                .map(Tsv::fromDictionary)
-                .distinct()
-                .toList();
+        return dictionaryRepository.findAll().parallelStream().map(Tsv::fromDictionary).distinct().toList();
     }
 }

@@ -34,7 +34,7 @@ public class KeyMWInterceptor implements ClientHttpRequestInterceptor {
         @Override
         public URI getURI() {
             return UriComponentsBuilder.fromUri(uri).queryParam("key", key)
-                    .build().toUri();
+                    .build(true).toUri();
         }
     }
 }

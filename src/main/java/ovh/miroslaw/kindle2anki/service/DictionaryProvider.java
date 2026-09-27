@@ -1,6 +1,8 @@
 package ovh.miroslaw.kindle2anki.service;
 
+import java.util.Optional;
+
 public interface DictionaryProvider {
 
-    String getDefinition(String test);
+    Optional<String> getDefinition(String test);
 }

@@ -12,9 +12,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
 @Service
@@ -35,9 +35,9 @@ public class VocabularyService {
         final long timestamp;
         try {
             timestamp = parseDate(dateFrom).toEpochMilli();
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException _) {
             ANSI_PRINT.accept("Wrong date format. Format: yyyy-MM-dd (2022-01-31)", AnsiColor.RED);
-            return Collections.emptyList();
+            return emptyList();
         }
         return getVocabulary(timestamp);
     }

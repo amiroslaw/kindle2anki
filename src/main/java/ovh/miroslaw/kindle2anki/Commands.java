@@ -2,8 +2,9 @@ package ovh.miroslaw.kindle2anki;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.stereotype.Component;
 import ovh.miroslaw.kindle2anki.service.DictionaryService;
 import ovh.miroslaw.kindle2anki.service.ExporterService;
 import ovh.miroslaw.kindle2anki.service.VocabularyService;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
-@Command
+@Component
 @RequiredArgsConstructor
 public class Commands {
 
@@ -23,7 +24,7 @@ public class Commands {
     private final ExporterService exporter;
 
     @Command(description = "Get a word definition", alias = "w")
-    public String definition(@Option(shortNames = 's', required = true) String searchWord) {
+    public String definition(@Option(shortName = 's', required = true) String searchWord) {
         return dictionaryService.addDictionary(searchWord);
     }
 
@@ -36,7 +37,7 @@ public class Commands {
 
     @Command(description = "Import words from a TSV file, fetch information from dictionary and save to the database. By default it will import vocabulary from the 'vocab.tsv' file  from the configuration folder.",
              alias = "i")
-    public void importTsv(@Option(longNames = "import-tsv", shortNames = 't', label = "file", description = "TSV file with words") File tsv) {
+    public void importTsv(@Option(longName = "import-tsv", shortName = 't', description = "TSV file with words") File tsv) {
         if (tsv == null) {
             dictionaryService.importTsv();
         } else {
@@ -46,8 +47,8 @@ public class Commands {
 
     @Command(description = "Export kindle vocabulary to a TSV file. By default it will only export vocabulary from the last export.", alias = "v")
     public void exportVocabulary(
-            @Option(description = "Date from which to export words. Format: yyyy-MM-dd (2022-01-31)", longNames = "from", shortNames = 'f') Optional<String> dateFrom,
-            @Option(longNames = "all", shortNames = 'a', description = "Export all vocabulary. Will omit `from` argument.") boolean all) {
+            @Option(description = "Date from which to export words. Format: yyyy-MM-dd (2022-01-31)", longName = "from", shortName = 'f') Optional<String> dateFrom,
+            @Option(longName = "all", shortName = 'a', description = "Export all vocabulary. Will omit `from` argument.") boolean all) {
         if (all && dateFrom.isPresent()) {
             ANSI_PRINT.accept("Cannot use `from` and `all` at the same time.", AnsiColor.RED);
             return;
@@ -65,5 +66,10 @@ public class Commands {
     @Command(description = "Export dictionary to a TSV file for Anki", alias = "d")
     public void exportDictionary() {
         exporter.exportDictionary(dictionaryService.getDictionary());
+    }
+
+    @Command(description = "List dictionary entries", alias = "l")
+    public void dictionary() {
+        dictionaryService.showDictionary();
     }
 }

@@ -107,6 +107,10 @@ spring.shell.config.location=${config.path}
 server.port=8081
 ----
 
+Is it possible to override the default configuration properties or provide a different config directory.
+`java -jar kindle2anki.jar --config.path="path/to/config"`
+Please make sure that you created that directory and added the `config.properties` file with the `api.key` property.
+
 === Used technology
 Spring Shell
 This is cross-platform software, you must have installed https://java.com/pl/download/[java 21] or above to run it.

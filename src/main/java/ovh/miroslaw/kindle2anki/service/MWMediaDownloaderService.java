@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 import static ovh.miroslaw.kindle2anki.model.MWProperties.AUDIO_EXTENSION;
@@ -44,13 +44,14 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
     @Override
     public void downloadMedia(Dictionary dictionary) {
         try {
-            Files.createDirectories(Paths.get(ankiCollectionPath));
-        } catch (IOException e) {
+            Files.createDirectories(Path.of(ankiCollectionPath));
+        } catch (IOException _) {
             ANSI_PRINT.accept("Unable to create directory " + ankiCollectionPath, AnsiColor.RED);
         }
         if (!dictionary.getAudios().isEmpty()) {
             downloadAudio(dictionary.getAudios().getFirst());
         }
+        // TODO: veirfy why I commented this out. It should be possible to download illustrations, but it seems that the MW API does not provide illustrations for all words.
 //        if (!dictionary.getIllustration().isBlank()) {
 //            downloadIllustration(dictionary.illustration());
 //        }
@@ -80,11 +81,11 @@ public class MWMediaDownloaderService implements MediaDownloaderService {
     private void download(String baseUrl, String fileName) {
         final byte[] imageBytes = retrieveImgBytes(baseUrl, fileName);
 
-        final File file = Paths.get(ankiCollectionPath, fileName).toFile();
+        final File file = Path.of(ankiCollectionPath, fileName).toFile();
 
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.write(imageBytes);
-        } catch (IOException e) {
+        } catch (IOException _) {
             ANSI_PRINT.accept("Unable to create: " + baseUrl + fileName, AnsiColor.RED);
         }
     }

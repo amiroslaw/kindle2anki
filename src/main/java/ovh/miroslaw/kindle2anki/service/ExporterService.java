@@ -12,8 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
 import static ovh.miroslaw.kindle2anki.TerminalUtil.ANSI_PRINT;
 
 @Service
@@ -43,7 +43,7 @@ public class ExporterService {
         final String txt = dictionaries.stream()
                 .distinct()
                 .map(this::toDictionaryRow)
-                .collect(Collectors.joining(System.lineSeparator()));
+                .collect(joining(System.lineSeparator()));
         writeToFile(txt, dictionaryTsv);
     }
 
@@ -51,7 +51,7 @@ public class ExporterService {
         try {
             Files.writeString(Path.of(fileName), txt, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE);
-        } catch (IOException e) {
+        } catch (IOException _) {
             ANSI_PRINT.accept("Unable to write file " + fileName, AnsiColor.RED);
         }
     }
