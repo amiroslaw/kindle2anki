@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: ovh.miroslaw.kindle2anki.Kindle2ankiApplication
+
